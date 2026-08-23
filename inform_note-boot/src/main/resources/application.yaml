@@ -1,0 +1,67 @@
+server:
+  port: 9093
+
+spring:
+  application:
+    name: inform-note
+
+  # database 접속 정보 (P6Spy Driver 적용)
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:oracle:thin:@localhost:1521/FREEPDB1
+    username: inform_note
+    password: leetj1485+
+
+
+mybatis:
+  # Mapper.xml 구성 파일의 위치.
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: io.nexcope.inform_note.domain
+  type-handlers-package: io.nexcope.inform_note.base.util.json
+  configuration:
+    # MyBatis 실행 쿼리 로그 출력 --> P6Spy 로그 사용
+    # log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    # 디폴트 타임아웃 설정.
+    default-statement-timeout: 30
+    # 데이터베이스 칼럼 이름을 언더스코어(_) → 카멜케이스로 자동 변환.
+    map-underscore-to-camel-case: true
+    # varchar 로 설장하면, NULL 값을 빈문자열(””)로 처리함.
+    jdbc-type-for-null: varchar
+    # true로 함으로써 db의 데이터 중 null인 값을 가져올 수 있도록 함
+    call-setters-on-nulls: true
+    # 하이픈(-), 공백 등이 포함된 DB Enum 값을 유연하게 자동 매핑
+    default-enum-type-handler: io.nexcope.inform_note.base.util.json.AutoEnumTypeHandler
+    # Mybatis에서 알 수 없는 칼럼에 대한 자동 매핑 동작.
+    # - NONE: 알 수 없는 칼럼은 무시.
+    # - WARNING: 알 수 없는 칼럼은 무시되지 않고, 경고 메세지가 기록.
+    # - FAILING: 예외를 던짐.
+    auto-mapping-unknown-column-behavior: none
+
+
+logging:
+  level:
+    root: info
+    io.nexcope.inform_note: info
+    io.nexcope.inform_note.domain.log.mapper: info
+    p6spy: info
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: true
+      logging: slf4j
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+# 파일 저장 경로 설정
+file:
+  upload-dir: D:/inform-note-workspace/files
+

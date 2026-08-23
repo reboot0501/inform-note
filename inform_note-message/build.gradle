@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':inform_note-feature')
+    implementation project(':inform_note-domain')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

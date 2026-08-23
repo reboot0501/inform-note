@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.nexcope.inform_note.domain.file.mapper.AttachedFileMapper">
+
+    <resultMap id="attachedFileResultMap" type="io.nexcope.inform_note.domain.file.entity.AttachedFile">
+        <id property="fileId" column="file_id" />
+        <result property="refType" column="ref_type" />
+        <result property="refId" column="ref_id" />
+        <result property="originFileName" column="origin_file_name" />
+        <result property="storedFileName" column="stored_file_name" />
+        <result property="filePath" column="file_path" />
+        <result property="fileSize" column="file_size" />
+        <result property="contentType" column="content_type" />
+        <result property="status" column="file_status" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <!-- 공통 SELECT 컬럼 절 -->
+    <sql id="fileColumns">
+        file_id,
+        ref_type,
+        ref_id,
+        origin_file_name,
+        stored_file_name,
+        file_path,
+        file_size,
+        content_type,
+        file_status,
+        created_by,
+        created_at,
+        updated_by,
+        updated_at
+    </sql>
+
+    <!-- 1. 단건 조회 (fileId 기준) -->
+    <select id="findById" parameterType="string" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE file_id = #{fileId}
+    </select>
+
+    <!-- 2. 단건 조회 (저장 파일명 storedFileName 기준) -->
+    <select id="findByStoredFileName" parameterType="string" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE stored_file_name = #{storedFileName}
+    </select>
+
+    <!-- 3. HTML 등에서 추출된 파일 ID 다건 목록으로 파일 조회 (IN 조건) -->
+    <select id="findByIds" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE file_id IN
+        <foreach item="id" collection="fileIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 4. HTML 등에서 추출된 저장 파일명(storedFileName) 다건 목록으로 파일 조회 (IN 조건) -->
+    <select id="findByStoredFileNames" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE stored_file_name IN
+        <foreach item="name" collection="storedFileNames" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </select>
+
+    <!-- 5. 연관 도메인 기준 파일 목록 조회 -->
+    <select id="findByRef" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE ref_type = #{refType}
+          AND ref_id = #{refId}
+          AND file_status != 'DELETED'
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 6. 만료된 임시 파일 목록 조회 (생성 시각 기준) -->
+    <select id="findExpiredTempFiles" resultMap="attachedFileResultMap">
+        SELECT 
+            <include refid="fileColumns" />
+        FROM tb_attached_file
+        WHERE file_status = 'TEMP'
+          AND created_at &lt;= #{expiredBefore}
+    </select>
+
+    <!-- 7. 등록 (Insert) -->
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.file.entity.AttachedFile">
+        INSERT INTO tb_attached_file (
+            file_id,
+            ref_type,
+            ref_id,
+            origin_file_name,
+            stored_file_name,
+            file_path,
+            file_size,
+            content_type,
+            file_status,
+            created_by,
+            created_at,
+            updated_by,
+            updated_at
+        ) VALUES (
+            #{fileId},
+            #{refType, jdbcType=VARCHAR},
+            #{refId, jdbcType=VARCHAR},
+            #{originFileName},
+            #{storedFileName},
+            #{filePath},
+            #{fileSize},
+            #{contentType},
+            #{status, jdbcType=VARCHAR},
+            #{createdBy, jdbcType=VARCHAR},
+            SYSTIMESTAMP,
+            #{updatedBy, jdbcType=VARCHAR},
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <!-- 8. 수정 (Update) -->
+    <update id="update" parameterType="io.nexcope.inform_note.domain.file.entity.AttachedFile">
+        UPDATE tb_attached_file
+        SET 
+            ref_type         = #{refType, jdbcType=VARCHAR},
+            ref_id           = #{refId, jdbcType=VARCHAR},
+            origin_file_name = #{originFileName},
+            stored_file_name = #{storedFileName},
+            file_path        = #{filePath},
+            file_size        = #{fileSize},
+            content_type     = #{contentType},
+            file_status      = #{status, jdbcType=VARCHAR},
+            updated_by       = #{updatedBy, jdbcType=VARCHAR},
+            updated_at       = SYSTIMESTAMP
+        WHERE file_id = #{fileId}
+    </update>
+
+    <!-- 9. 상태 변경 (단건) -->
+    <update id="updateStatus">
+        UPDATE tb_attached_file
+        SET 
+            file_status = #{status},
+            updated_by  = #{updatedBy, jdbcType=VARCHAR},
+            updated_at  = SYSTIMESTAMP
+        WHERE file_id = #{fileId}
+    </update>
+
+    <!-- 10. 파일 목록 일괄 확정 및 연관 ID 매핑 -->
+    <update id="saveFiles">
+        UPDATE  tb_attached_file
+           SET
+                ref_id      = #{refId}
+               ,file_status = 'SAVED'
+               ,updated_by  = #{updatedBy, jdbcType=VARCHAR}
+               ,updated_at  = SYSTIMESTAMP
+         WHERE  file_id IN
+        <foreach item="id" collection="fileIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 10. 파일 목록 일괄 확정 및 연관 ID 매핑 -->
+    <update id="confirmFiles">
+        UPDATE tb_attached_file
+        SET 
+            ref_type    = #{refType},
+            ref_id      = #{refId},
+            file_status = 'SAVED',
+            updated_by  = #{updatedBy, jdbcType=VARCHAR},
+            updated_at  = SYSTIMESTAMP
+        WHERE file_id IN
+        <foreach item="id" collection="fileIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 11. 단건 물리 삭제 (Delete) -->
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM tb_attached_file
+        WHERE file_id = #{fileId}
+    </delete>
+
+    <!-- 12. 다건 물리 삭제 (Delete IN) -->
+    <delete id="deleteByIds">
+        DELETE FROM tb_attached_file
+        WHERE file_id IN
+        <foreach item="id" collection="fileIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

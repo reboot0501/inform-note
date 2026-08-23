@@ -1,0 +1,8 @@
+rootProject.name = 'inform-note'
+
+include 'inform_note-boot'
+include 'inform_note-base'
+include 'inform_note-domain'
+include 'inform_note-feature'
+include 'inform_note-facade'
+include 'inform_note-message'

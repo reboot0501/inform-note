@@ -1,0 +1,30 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    implementation project(':inform_note-facade')
+    implementation project(':inform_note-message')
+    implementation project(':inform_note-feature')
+    implementation project(':inform_note-domain')
+    implementation project(':inform_note-base')
+
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}
+

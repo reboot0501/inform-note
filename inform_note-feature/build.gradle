@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':inform_note-base')
+    implementation project(':inform_note-domain')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework:spring-web'
+    implementation 'io.swagger.core.v3:swagger-annotations-jakarta:2.2.28'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+

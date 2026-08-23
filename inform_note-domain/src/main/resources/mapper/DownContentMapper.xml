@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.nexcope.inform_note.domain.content.mapper.DownContentMapper">
+
+    <!-- 1. 상세 본문 단건 조회 (CLOB은 자바 String에 자동 매핑됨) -->
+    <select id="findById" parameterType="string" resultType="io.nexcope.inform_note.domain.content.entity.DownContent">
+        SELECT 
+            down_event_id,
+            content_html,
+            created_by,
+            created_at,
+            updated_by,
+            updated_at
+        FROM tb_down_content
+        WHERE down_event_id = #{downEventId}
+    </select>
+
+    <!-- 2. 상세 본문 다건 조회 (IN 조건) -->
+    <select id="findByIds" resultType="io.nexcope.inform_note.domain.content.entity.DownContent">
+        SELECT 
+            down_event_id,
+            content_html,
+            created_by,
+            created_at,
+            updated_by,
+            updated_at
+        FROM tb_down_content
+        WHERE down_event_id IN
+        <foreach item="id" collection="downEventIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 3. 상세 본문 등록 (Insert) -->
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.content.entity.DownContent">
+        INSERT INTO tb_down_content (
+            down_event_id,
+            content_html,
+            created_by,
+            created_at,
+            updated_by,
+            updated_at
+        ) VALUES (
+            #{downEventId},
+            #{contentHtml, jdbcType=CLOB},
+            #{createdBy},
+            SYSTIMESTAMP,
+            #{updatedBy},
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <!-- 4. 상세 본문 수정 (Update) -->
+    <update id="update" parameterType="io.nexcope.inform_note.domain.content.entity.DownContent">
+        UPDATE tb_down_content
+        SET 
+            content_html = #{contentHtml, jdbcType=CLOB},
+            updated_by   = #{updatedBy},
+            updated_at   = SYSTIMESTAMP
+        WHERE down_event_id = #{downEventId}
+    </update>
+
+    <!-- 5. 상세 본문 등록 또는 수정 (Oracle MERGE INTO 구문) -->
+    <insert id="saveOrUpdate" parameterType="io.nexcope.inform_note.domain.content.entity.DownContent">
+        MERGE INTO tb_down_content target
+        USING (SELECT #{downEventId} AS down_event_id FROM DUAL) src
+           ON (target.down_event_id = src.down_event_id)
+        WHEN MATCHED THEN
+            UPDATE SET 
+                target.content_html = #{contentHtml, jdbcType=CLOB},
+                target.updated_by   = #{updatedBy},
+                target.updated_at   = SYSTIMESTAMP
+        WHEN NOT MATCHED THEN
+            INSERT (
+                down_event_id, 
+                content_html, 
+                created_by, 
+                created_at, 
+                updated_by, 
+                updated_at
+            ) VALUES (
+                #{downEventId}, 
+                #{contentHtml, jdbcType=CLOB}, 
+                #{createdBy}, 
+                SYSTIMESTAMP, 
+                #{updatedBy}, 
+                SYSTIMESTAMP
+            )
+    </insert>
+
+    <!-- 6. 상세 본문 삭제 (Delete) -->
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM tb_down_content
+        WHERE down_event_id = #{downEventId}
+    </delete>
+
+</mapper>

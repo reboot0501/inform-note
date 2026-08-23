@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.nexcope.inform_note.domain.employees.mapper.EmployeesMapper">
+
+    <!-- 1. 단건 조회 (employeeId 기준) -->
+    <select id="findById" parameterType="long" resultType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        SELECT 
+            employee_id,
+            emp_no,
+            shift,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            hire_date,
+            job_id,
+            salary,
+            commission_pct,
+            manager_id,
+            department_id
+        FROM employees
+        WHERE employee_id = #{employeeId}
+    </select>
+
+    <!-- 2. 전체 목록 조회 -->
+    <select id="findAll" resultType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        SELECT 
+            employee_id,
+            emp_no,
+            shift,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            hire_date,
+            job_id,
+            salary,
+            commission_pct,
+            manager_id,
+            department_id
+        FROM employees
+        ORDER BY employee_id ASC
+    </select>
+
+    <!-- 3. 부서별 목록 조회 -->
+    <select id="findByDepartmentId" parameterType="long" resultType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        SELECT 
+            employee_id,
+            emp_no,
+            shift,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            hire_date,
+            job_id,
+            salary,
+            commission_pct,
+            manager_id,
+            department_id
+        FROM employees
+        WHERE department_id = #{departmentId}
+        ORDER BY employee_id ASC
+    </select>
+
+    <!-- 4. 단건 조회 (empNo 기준) -->
+    <select id="findByEmpNo" parameterType="string" resultType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        SELECT 
+            employee_id,
+            emp_no,
+            shift,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            hire_date,
+            job_id,
+            salary,
+            commission_pct,
+            manager_id,
+            department_id
+        FROM employees
+        WHERE emp_no = #{empNo}
+    </select>
+
+    <!-- 5. 등록 (Insert) -->
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        INSERT INTO employees (
+            employee_id,
+            emp_no,
+            shift,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            hire_date,
+            job_id,
+            salary,
+            commission_pct,
+            manager_id,
+            department_id
+        ) VALUES (
+            #{employeeId},
+            #{empNo},
+            #{shift},
+            #{firstName},
+            #{lastName},
+            #{email},
+            #{phoneNumber},
+            #{hireDate},
+            #{jobId},
+            #{salary},
+            #{commissionPct},
+            #{managerId},
+            #{departmentId}
+        )
+    </insert>
+
+    <!-- 6. 수정 (Update) -->
+    <update id="update" parameterType="io.nexcope.inform_note.domain.employees.entity.Employees">
+        UPDATE employees
+        SET 
+            emp_no         = #{empNo},
+            shift          = #{shift},
+            first_name     = #{firstName},
+            last_name      = #{lastName},
+            email          = #{email},
+            phone_number   = #{phoneNumber},
+            hire_date      = #{hireDate},
+            job_id         = #{jobId},
+            salary         = #{salary},
+            commission_pct = #{commissionPct},
+            manager_id     = #{managerId},
+            department_id  = #{departmentId}
+        WHERE employee_id = #{employeeId}
+    </update>
+
+    <!-- 7. 삭제 (Delete) -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM employees
+        WHERE employee_id = #{employeeId}
+    </delete>
+
+    <!-- 8. 정규식 패턴 기반 직원 추출 목록 조회 (페이징) -->
+    <select id="findByNamePattern" parameterType="io.nexcope.inform_note.domain.employees.entity.vo.EmployeeSearchCriteria" resultType="io.nexcope.inform_note.domain.employees.entity.vo.ExtractEmployee">
+        SELECT
+              te.emp_no
+            , te.name
+            , te.department_id
+            , td.department_name
+            , tj.job_id
+            , tj.job_title
+            , te.shift
+        FROM tb_employees te
+        INNER JOIN tb_departments td
+            ON td.department_id = te.department_id
+        INNER JOIN tb_jobs tj
+            ON tj.job_id = te.job_id
+        <where>
+            <if test="namePattern != null and namePattern != ''">
+                te.name LIKE '%' || #{namePattern} || '%'
+            </if>
+        </where>
+        ORDER BY te.name ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <!-- 9. 정규식 패턴 기반 직원 추출 전체 건수 조회 (페이징 카운트) -->
+    <select id="countByNamePattern" parameterType="io.nexcope.inform_note.domain.employees.entity.vo.EmployeeSearchCriteria" resultType="long">
+        SELECT 
+            COUNT(*)
+        FROM 
+            tb_employees te
+        INNER JOIN tb_departments td
+           ON td.department_id = te.department_id
+        INNER JOIN tb_jobs tj
+           ON tj.job_id = te.job_id
+        <where>
+            <if test="namePattern != null and namePattern != ''">
+                AND te.name LIKE '%' || #{namePattern} || '%'
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+

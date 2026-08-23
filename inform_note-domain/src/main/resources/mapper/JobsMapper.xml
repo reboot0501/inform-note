@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.nexcope.inform_note.domain.jobs.mapper.JobsMapper">
+
+    <!-- 1. 단건 조회 (jobId 기준) -->
+    <select id="findById" parameterType="string" resultType="io.nexcope.inform_note.domain.jobs.entity.Jobs">
+        SELECT 
+            job_id,
+            job_title,
+            min_salary,
+            max_salary
+        FROM jobs
+        WHERE job_id = #{jobId}
+    </select>
+
+    <!-- 2. 전체 목록 조회 -->
+    <select id="findAll" resultType="io.nexcope.inform_note.domain.jobs.entity.Jobs">
+        SELECT 
+            job_id,
+            job_title,
+            min_salary,
+            max_salary
+        FROM jobs
+        ORDER BY job_id ASC
+    </select>
+
+    <!-- 3. 등록 (Insert) -->
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.jobs.entity.Jobs">
+        INSERT INTO jobs (
+            job_id,
+            job_title,
+            min_salary,
+            max_salary
+        ) VALUES (
+            #{jobId},
+            #{jobTitle},
+            #{minSalary},
+            #{maxSalary}
+        )
+    </insert>
+
+    <!-- 4. 수정 (Update) -->
+    <update id="update" parameterType="io.nexcope.inform_note.domain.jobs.entity.Jobs">
+        UPDATE jobs
+        SET 
+            job_title  = #{jobTitle},
+            min_salary = #{minSalary},
+            max_salary = #{maxSalary}
+        WHERE job_id = #{jobId}
+    </update>
+
+    <!-- 5. 등록 또는 수정 (Oracle MERGE INTO 구문) -->
+    <insert id="saveOrUpdate" parameterType="io.nexcope.inform_note.domain.jobs.entity.Jobs">
+        MERGE INTO jobs target
+        USING (SELECT #{jobId} AS job_id FROM DUAL) src
+           ON (target.job_id = src.job_id)
+        WHEN MATCHED THEN
+            UPDATE SET 
+                target.job_title  = #{jobTitle},
+                target.min_salary = #{minSalary},
+                target.max_salary = #{maxSalary}
+        WHEN NOT MATCHED THEN
+            INSERT (
+                job_id,
+                job_title,
+                min_salary,
+                max_salary
+            ) VALUES (
+                #{jobId},
+                #{jobTitle},
+                #{minSalary},
+                #{maxSalary}
+            )
+    </insert>
+
+    <!-- 6. 삭제 (Delete) -->
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM jobs
+        WHERE job_id = #{jobId}
+    </delete>
+
+</mapper>
