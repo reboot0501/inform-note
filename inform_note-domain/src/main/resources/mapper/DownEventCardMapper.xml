@@ -2,16 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.nexcope.inform_note.domain.log.mapper.DownEventLogMapper">
+<mapper namespace="io.nexcope.inform_note.domain.card.mapper.DownEventCardMapper">
 
     <!-- ResultMap: 일반 컬럼은 autoMapping 처리, JSON 컬럼만 명시적 TypeHandler 지정 -->
-    <resultMap id="downEventLogResultMap" type="io.nexcope.inform_note.domain.log.entity.DownEventLog" autoMapping="true">
+    <resultMap id="downEventCardResultMap" type="io.nexcope.inform_note.domain.card.entity.DownEventCard" autoMapping="true">
         <!-- 단일 JSON 객체 매핑 -->
         <result property="assignedTechnician" column="assigned_technician" 
-                javaType="io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician"
+                javaType="io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician"
                 typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
         <result property="approver" column="approver" 
-                javaType="io.nexcope.inform_note.domain.log.entity.vo.Approver"
+                javaType="io.nexcope.inform_note.domain.card.entity.vo.Approver"
                 typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
         <!-- 리스트 JSON 객체 매핑 -->
         <result property="partReplacements" column="part_replacements" 
@@ -19,7 +19,7 @@
     </resultMap>
 
     <!-- 1. 단건 조회 -->
-    <select id="findById" parameterType="string" resultMap="downEventLogResultMap">
+    <select id="findById" parameterType="string" resultMap="downEventCardResultMap">
         SELECT 
             down_event_id,
             equipment_id,
@@ -48,7 +48,7 @@
     </select>
 
     <!-- 2. 전체 목록 조회 -->
-    <select id="findAll" resultMap="downEventLogResultMap">
+    <select id="findAll" resultMap="downEventCardResultMap">
         SELECT
             down_event_id,
             equipment_id,
@@ -127,7 +127,7 @@
     </sql>
 
     <!-- 3. 조건별 필터링 및 페이징 목록 조회 -->
-    <select id="findByCriteria" parameterType="io.nexcope.inform_note.domain.log.entity.vo.DownEventLogSearchCriteria" resultMap="downEventLogResultMap">
+    <select id="findByCriteria" parameterType="io.nexcope.inform_note.domain.card.entity.vo.DownEventCardSearchCriteria" resultMap="downEventCardResultMap">
         SELECT
             down_event_id,
             equipment_id,
@@ -160,7 +160,7 @@
 
 
     <!-- 4. 조건별 전체 건수 조회 (페이징 카운트) -->
-    <select id="countByCriteria" parameterType="io.nexcope.inform_note.domain.log.entity.vo.DownEventLogSearchCriteria" resultType="long">
+    <select id="countByCriteria" parameterType="io.nexcope.inform_note.domain.card.entity.vo.DownEventCardSearchCriteria" resultType="long">
         SELECT
             COUNT(*)
         FROM
@@ -169,68 +169,70 @@
     </select>
 
     <!-- 5. 등록 (Insert with JSON Objects) -->
-    <insert id="insert" parameterType="io.nexcope.inform_note.domain.log.entity.DownEventLog">
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.card.entity.DownEventCard">
         INSERT INTO tb_down_event_log (
-            down_event_id,
-            equipment_id,
-            chamber_id,
-            fabrication_plant,
-            process_module,
-            equipment_model,
-            down_type,
-            work_status,
-            down_start_datetime,
-            down_end_datetime,
-            down_duration_minutes,
-            is_critical,
-            down_code,
-            down_code_description,
-            alarm_id,
-            assigned_technician,
-            approver,
-            part_replacements,
-            created_by,
-            created_at,
-            updated_by,
-            updated_at
+        down_event_id,
+        equipment_id,
+        chamber_id,
+        fabrication_plant,
+        process_module,
+        equipment_model,
+        down_type,
+        work_status,
+        down_start_datetime,
+        down_end_datetime,
+        down_duration_minutes,
+        is_critical,
+        down_code,
+        down_code_description,
+        alarm_id,
+        assigned_technician,
+        approver,
+        part_replacements,
+        created_by,
+        created_at,
+        updated_by,
+        updated_at
         ) VALUES (
-            #{downEventId},
-            #{equipmentId},
-            #{chamberId},
-            #{fabricationPlant},
-            #{processModule},
-            #{equipmentModel},
-            #{downType},
-            #{workStatus},
-            #{downStartDatetime},
-            #{downEndDatetime},
-            #{downDurationMinutes},
-            #{isCritical},
-            #{downCode},
-            #{downCodeDescription},
-            #{alarmId},
-            #{assignedTechnician, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician},
-            #{approver, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.log.entity.vo.Approver},
-            #{partReplacements, typeHandler=io.nexcope.inform_note.base.util.json.JsonListTypeHandler},
-            #{createdBy},
-            SYSTIMESTAMP,
-            #{updatedBy},
-            SYSTIMESTAMP
+        #{downEventId},
+        #{equipmentId},
+        #{chamberId},
+        #{fabricationPlant},
+        #{processModule},
+        #{equipmentModel},
+        #{downType},
+        #{workStatus},
+        #{downStartDatetime},
+        #{downEndDatetime},
+        #{downDurationMinutes},
+        #{isCritical},
+        #{downCode},
+        #{downCodeDescription},
+        #{alarmId},
+        #{assignedTechnician, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician},
+        #{approver, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.card.entity.vo.Approver},
+        #{partReplacements, typeHandler=io.nexcope.inform_note.base.util.json.JsonListTypeHandler},
+        #{createdBy},
+        SYSTIMESTAMP,
+        #{updatedBy},
+        SYSTIMESTAMP
         )
     </insert>
 
     <!-- 6. 수정 (Update) -->
-    <update id="update" parameterType="io.nexcope.inform_note.domain.log.entity.DownEventLog">
+    <update id="update" parameterType="io.nexcope.inform_note.domain.card.entity.DownEventCard">
         UPDATE tb_down_event_log
-        SET 
-            work_status             = #{workStatus},
-            down_end_datetime       = #{downEndDatetime},
-            down_duration_minutes   = #{downDurationMinutes},
-            assigned_technician     = #{assignedTechnician, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician},
-            approver                = #{approver, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.log.entity.vo.Approver},
-            part_replacements       = #{partReplacements, typeHandler=io.nexcope.inform_note.base.util.json.JsonListTypeHandler},
-            updated_by              = #{updatedBy},
-            updated_at              = SYSTIMESTAMP
+        SET
+        work_status = #{workStatus},
+        down_end_datetime = #{downEndDatetime},
+        down_duration_minutes = #{downDurationMinutes},
+        assigned_technician =
+        #{assignedTechnician, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician},
+        approver =
+        #{approver, typeHandler=io.nexcope.inform_note.base.util.json.JsonTypeHandler, javaType=io.nexcope.inform_note.domain.card.entity.vo.Approver},
+        part_replacements = #{partReplacements, typeHandler=io.nexcope.inform_note.base.util.json.JsonListTypeHandler},
+        updated_by = #{updatedBy},
+        updated_at = SYSTIMESTAMP
         WHERE down_event_id = #{downEventId}
     </update>
 

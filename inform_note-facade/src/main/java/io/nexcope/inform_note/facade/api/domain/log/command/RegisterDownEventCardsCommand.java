@@ -2,7 +2,7 @@ package io.nexcope.inform_note.facade.api.domain.log.command;
 
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.dto.DownEventLogDto;
+import io.nexcope.inform_note.domain.card.entity.dto.DownEventCardDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,18 +10,20 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 @Slf4j
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterDownEventLogCommand implements JsonSerializable {
+public class RegisterDownEventCardsCommand implements JsonSerializable {
     //
-    private DownEventLogDto downEventLogDto;
+    private List<DownEventCardDto> downEventCardDtos;
 
     public void validate() {
         //
-        Assert.notNull(downEventLogDto, "'downEventLogDto' is required");
+        Assert.notNull(downEventCardDtos, "'downEventLogDtos' is required");
     }
 
     @Override
@@ -30,14 +32,15 @@ public class RegisterDownEventLogCommand implements JsonSerializable {
         return toJson();
     }
 
-    public static RegisterDownEventLogCommand fromJson(String json) {
+    public static RegisterDownEventCardsCommand fromJson(String json) {
         //
-        return JsonUtil.fromJson(json, RegisterDownEventLogCommand.class);
+        return JsonUtil.fromJson(json, RegisterDownEventCardsCommand.class);
     }
 
-    public static RegisterDownEventLogCommand sample() {
+    public static RegisterDownEventCardsCommand sample() {
         //
-        return new RegisterDownEventLogCommand(DownEventLogDto.sample());
+        List<DownEventCardDto> sample = List.of(DownEventCardDto.sample());
+        return new RegisterDownEventCardsCommand(sample);
     }
 
     public static void main(String[] args) {

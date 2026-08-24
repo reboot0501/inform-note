@@ -166,7 +166,7 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private Class<?> findFieldTypeInKnownPackages(String fieldName) {
         String[] candidateEntityClassNames = {
-            "io.nexcope.inform_note.domain.log.entity.DownEventLog",
+            "io.nexcope.inform_note.domain.card.entity.DownEventCard",
             "io.nexcope.inform_note.domain.content.entity.DownContent",
             "io.nexcope.inform_note.domain.employees.entity.Employees"
         };
@@ -319,7 +319,7 @@ public class JsonListTypeHandler<E> extends BaseTypeHandler<List<E>> {
 
     private Class<?> findGenericTypeInKnownPackages(String fieldName) {
         String[] candidateEntityClassNames = {
-            "io.nexcope.inform_note.domain.log.entity.DownEventLog",
+            "io.nexcope.inform_note.domain.card.entity.DownEventCard",
             "io.nexcope.inform_note.domain.content.entity.DownContent",
             "io.nexcope.inform_note.domain.employees.entity.Employees"
         };
@@ -365,7 +365,7 @@ public class JsonListTypeHandler<E> extends BaseTypeHandler<List<E>> {
 
 ---
 
-## 4. MyBatis XML 매퍼 적용 예시 (`DownEventLogMapper.xml`)
+## 4. MyBatis XML 매퍼 적용 예시 (`DownEventCardMapper.xml`)
 
 `autoMapping="true"`를 활성화한 `<resultMap>`을 정의하고, **JSON 컬럼 3개만 TypeHandler를 지정**하면 나머지 일반 컬럼(식별자, 일시, 상태, Enum 등)은 자동으로 카멜케이스 매핑됩니다.
 
@@ -374,35 +374,36 @@ public class JsonListTypeHandler<E> extends BaseTypeHandler<List<E>> {
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.nexcope.inform_note.domain.log.mapper.DownEventLogMapper">
+<mapper namespace="io.nexcope.inform_note.domain.card.mapper.DownEventCardMapper">
 
-    <!-- autoMapping="true"로 일반 컬럼은 자동 매핑, JSON 컬럼만 핸들러 지정 -->
-    <resultMap id="downEventLogResultMap" type="io.nexcope.inform_note.domain.log.entity.DownEventLog" autoMapping="true">
-        <id property="downEventId" column="down_event_id" />
-        
-        <!-- 단일 JSON 객체 매핑 -->
-        <result property="assignedTechnician" column="assigned_technician"
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
-        <result property="approver" column="approver"
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
-        
-        <!-- JSON 배열/리스트 매핑 -->
-        <result property="partReplacements" column="part_replacements"
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonListTypeHandler" />
-    </resultMap>
+   <!-- autoMapping="true"로 일반 컬럼은 자동 매핑, JSON 컬럼만 핸들러 지정 -->
+   <resultMap id="downEventLogResultMap" type="io.nexcope.inform_note.domain.card.entity.DownEventCard"
+              autoMapping="true">
+      <id property="downEventId" column="down_event_id"/>
 
-    <!-- 조건 검색 쿼리 -->
-    <select id="findByCriteria" resultMap="downEventLogResultMap">
-        SELECT *
-        FROM tb_down_event_log
-        <where>
-            <if test="criteria.equipmentId != null and criteria.equipmentId != ''">
-                AND equipment_id = #{criteria.equipmentId}
-            </if>
-        </where>
-        ORDER BY down_start_datetime DESC
-        OFFSET #{criteria.offset} ROWS FETCH NEXT #{criteria.limit} ROWS ONLY
-    </select>
+      <!-- 단일 JSON 객체 매핑 -->
+      <result property="assignedTechnician" column="assigned_technician"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler"/>
+      <result property="approver" column="approver"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler"/>
+
+      <!-- JSON 배열/리스트 매핑 -->
+      <result property="partReplacements" column="part_replacements"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonListTypeHandler"/>
+   </resultMap>
+
+   <!-- 조건 검색 쿼리 -->
+   <select id="findByCriteria" resultMap="downEventLogResultMap">
+      SELECT *
+      FROM tb_down_event_log
+      <where>
+         <if test="criteria.equipmentId != null and criteria.equipmentId != ''">
+            AND equipment_id = #{criteria.equipmentId}
+         </if>
+      </where>
+      ORDER BY down_start_datetime DESC
+      OFFSET #{criteria.offset} ROWS FETCH NEXT #{criteria.limit} ROWS ONLY
+   </select>
 
 </mapper>
 ```

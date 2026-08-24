@@ -76,7 +76,7 @@ logging:
   level:
     root: info
     io.nexcope.inform_note: info
-    io.nexcope.inform_note.domain.log.mapper: info  # MyBatis 기본 분리 로그(? 출력) 비활성화
+    io.nexcope.inform_note.domain.card.mapper: info  # MyBatis 기본 분리 로그(? 출력) 비활성화
     p6spy: info                                    # P6Spy 바인딩 완성형 SQL 로그 활성화
 
 # P6Spy 데코레이터 설정

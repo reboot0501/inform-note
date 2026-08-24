@@ -1,9 +1,8 @@
 package io.nexcope.inform_note.facade.api.domain.log.rest;
 
-import io.nexcope.inform_note.domain.log.entity.DownEventLog;
-import io.nexcope.inform_note.domain.log.logic.DownEventLogLogic;
-import io.nexcope.inform_note.facade.api.domain.log.command.RegisterDownEventLogCommand;
-import io.nexcope.inform_note.facade.api.domain.log.command.RegisterDownEventLogsCommand;
+import io.nexcope.inform_note.domain.card.logic.DownEventCardLogic;
+import io.nexcope.inform_note.facade.api.domain.log.command.RegisterDownEventCardCommand;
+import io.nexcope.inform_note.facade.api.domain.log.command.RegisterDownEventCardsCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,25 +15,25 @@ import java.util.List;
 
 @Tag(name = "Down Event Log", description = "비가동 이벤트 로그 API")
 @RestController
-@RequestMapping("/domain/log")
+@RequestMapping("/domain/card")
 @RequiredArgsConstructor
-public class DownEventLogResource {
+public class DownEventCardResource {
     //
-    private final DownEventLogLogic downEventlogLogic;
+    private final DownEventCardLogic downEventCardLogic;
 
     @Operation(summary = "비가동 이벤트 로그 단건 등록", description = "단건의 비가동 이벤트 로그를 등록합니다.")
-    @PostMapping("/register/command")
-    public String registerDownEventLog(@RequestBody RegisterDownEventLogCommand command) {
+    @PostMapping("/register-down-event-card/command")
+    public String registerDownEventCard(@RequestBody RegisterDownEventCardCommand command) {
         //
         command.validate();
-        return downEventlogLogic.register(command.getDownEventLogDto());
+        return downEventCardLogic.registerDownEventCard(command.getDownEventCardDto());
     }
 
     @Operation(summary = "비가동 이벤트 로그 다건 등록", description = "다건의 비가동 이벤트 로그를 일괄 등록합니다.")
-    @PostMapping("/registers/command")
-    public List<String> registerDownEventLogs(@RequestBody RegisterDownEventLogsCommand command) {
+    @PostMapping("/register-down-event-cards/command")
+    public List<String> registerDownEventCards(@RequestBody RegisterDownEventCardsCommand command) {
         //
         command.validate();
-        return downEventlogLogic.registers(command.getDownEventLogDtos());
+        return downEventCardLogic.registerDownEventCards(command.getDownEventCardDtos());
     }
 }

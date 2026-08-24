@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Field;
 import java.sql.CallableStatement;
@@ -11,12 +15,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 @MappedJdbcTypes(JdbcType.OTHER)
 public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 
-    private static final Map<String, Class<?>> TYPE_CACHE = new ConcurrentHashMap<>();
+    // [전역 캐시] 컬럼명(SNAKE_CASE) -> 대상 VO/필드 Class
+    private static final Map<String, Class<?>> FIELD_TYPE_MAP = new ConcurrentHashMap<>();
+    private static volatile boolean isScanned = false;
+
     private final Class<T> type;
     private final TypeReference<T> typeReference;
 
@@ -84,8 +93,8 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
                 return JsonUtil.fromJson(content, type);
             }
 
-            // type이 Object.class인 경우 리플렉션으로 엔티티의 필드 타입을 동적 탐색
-            Class<?> resolvedType = resolveFieldTypeFromReflection(columnName);
+            // 1. type이 Object인 경우 자동 스캔된 리플렉션 맵에서 타입 추출
+            Class<?> resolvedType = resolveFieldType(columnName);
             if (resolvedType != null && resolvedType != Object.class) {
                 return (T) JsonUtil.fromJson(content, resolvedType);
             }
@@ -96,51 +105,51 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
         }
     }
 
-    private Class<?> resolveFieldTypeFromReflection(String columnName) {
+    /**
+     * 컬럼명에 매칭되는 필드 타입을 도메인 패키지 자동 스캔을 통해 결정
+     */
+    private Class<?> resolveFieldType(String columnName) {
         if (columnName == null) return Object.class;
-
-        return TYPE_CACHE.computeIfAbsent(columnName.toUpperCase(), col -> {
-            String fieldName = toCamelCase(col);
-            Class<?> resolved = findFieldTypeInKnownPackages(fieldName);
-            return resolved != null ? resolved : Object.class;
-        });
+        ensureDomainClassesScanned();
+        return FIELD_TYPE_MAP.getOrDefault(columnName.toUpperCase(), Object.class);
     }
 
-    private Class<?> findFieldTypeInKnownPackages(String fieldName) {
-        String[] candidateEntityClassNames = {
-            "io.nexcope.inform_note.domain.log.entity.DownEventLog",
-            "io.nexcope.inform_note.domain.content.entity.DownContent",
-            "io.nexcope.inform_note.domain.employees.entity.Employees"
-        };
+    /**
+     * io.nexcope.inform_note.domain 하위의 모든 Entity 클래스를 자동 스캔하여 필드 매핑 등록
+     */
+    private synchronized void ensureDomainClassesScanned() {
+        if (isScanned) return;
 
-        for (String className : candidateEntityClassNames) {
-            try {
-                Class<?> entityClass = Class.forName(className);
-                Field[] fields = entityClass.getDeclaredFields();
-                for (Field field : fields) {
-                    if (field.getName().equalsIgnoreCase(fieldName)) {
-                        return field.getType();
+        try {
+            ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+            // entity 패키지 하위 클래스 대상 필터
+            scanner.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile("io\\.nexcope\\.inform_note\\.domain\\..*\\.entity\\..*")));
+
+            Set<BeanDefinition> candidates = scanner.findCandidateComponents("io.nexcope.inform_note.domain");
+            ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+
+            for (BeanDefinition beanDef : candidates) {
+                try {
+                    Class<?> clazz = ClassUtils.forName(beanDef.getBeanClassName(), classLoader);
+                    for (Field field : clazz.getDeclaredFields()) {
+                        String snakeName = toSnakeCase(field.getName()).toUpperCase();
+                        // Primitive/String/표준 타입을 제외한 VO 객체만 캐싱
+                        if (!field.getType().isPrimitive() 
+                                && !field.getType().getName().startsWith("java.lang") 
+                                && !field.getType().getName().startsWith("java.time")) {
+                            FIELD_TYPE_MAP.putIfAbsent(snakeName, field.getType());
+                        }
                     }
+                } catch (Throwable ignored) {
                 }
-            } catch (ClassNotFoundException ignored) {
             }
+        } catch (Throwable ignored) {
+        } finally {
+            isScanned = true;
         }
-        return null;
     }
 
-    private String toCamelCase(String snakeCase) {
-        StringBuilder sb = new StringBuilder();
-        boolean nextUpper = false;
-        for (char c : snakeCase.toCharArray()) {
-            if (c == '_') {
-                nextUpper = true;
-            } else if (nextUpper) {
-                sb.append(Character.toUpperCase(c));
-                nextUpper = false;
-            } else {
-                sb.append(Character.toLowerCase(c));
-            }
-        }
-        return sb.toString();
+    private String toSnakeCase(String camelCase) {
+        return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
 }

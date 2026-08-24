@@ -1,8 +1,8 @@
 package io.nexcope.inform_note.facade.api.feature.maintenance.rest;
 
-import io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician;
-import io.nexcope.inform_note.domain.log.entity.vo.PartReplacement;
-import io.nexcope.inform_note.domain.log.entity.vo.WorkStatus;
+import io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician;
+import io.nexcope.inform_note.domain.card.entity.vo.PartReplacement;
+import io.nexcope.inform_note.domain.card.entity.vo.WorkStatus;
 import io.nexcope.inform_note.facade.api.feature.maintenance.command.CorrectiveActionCommand;
 import io.nexcope.inform_note.feature.maintenance.flow.MaintenanceFlow;
 import io.swagger.v3.oas.annotations.Operation;

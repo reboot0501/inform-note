@@ -1,4 +1,4 @@
-package io.nexcope.inform_note.domain.log.entity.vo;
+package io.nexcope.inform_note.domain.card.entity.vo;
 
 import io.nexcope.inform_note.base.domain.entity.CodeName;
 import io.nexcope.inform_note.base.util.json.JsonUtil;

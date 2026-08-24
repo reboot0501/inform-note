@@ -1,7 +1,7 @@
 # DownEventLog 도메인 클래스와 MyBatis 연동 가이드
 
 ## 1. 개요
-본 문서는 Oracle 23ai / 26ai의 **Native `JSON` 컬럼** 및 **Enum/Boolean** 컬럼을 포함하는 `tb_down_event_log` 테이블을 MyBatis 환경에서 번거로운 `<resultMap>` 태그 없이 **`resultType` 단독 지정만으로 `DownEventLog` 도메인 엔티티에 자동 매핑**하는 아키텍처와 구현 예시를 정리합니다.
+본 문서는 Oracle 23ai / 26ai의 **Native `JSON` 컬럼** 및 **Enum/Boolean** 컬럼을 포함하는 `tb_down_event_log` 테이블을 MyBatis 환경에서 번거로운 `<resultMap>` 태그 없이 **`resultType` 단독 지정만으로 `DownEventCard` 도메인 엔티티에 자동 매핑**하는 아키텍처와 구현 예시를 정리합니다.
 
 ---
 
@@ -341,17 +341,17 @@ public interface DownEventLogMapper {
     List<DownEventLog> findAll();
 
     // 등록 (Insert)
-    int insert(DownEventLog downEventLog);
+    int insert(DownEventLog downEventCard);
 
     // 수정 (Update)
-    int update(DownEventLog downEventLog);
+    int update(DownEventLog downEventCard);
 
     // 삭제 (Delete)
     int deleteById(@Param("downEventId") String downEventId);
 }
 ```
 
-### 6.2. 매퍼 XML: `DownEventLogMapper.xml`
+### 6.2. 매퍼 XML: `DownEventCardMapper.xml`
 
 JSON 컬럼과 일반 컬럼을 효율적으로 매핑하기 위해 **`autoMapping="true"` 기반의 `<resultMap>`**을 구성합니다.
 - **일반 컬럼(식별자, Enum, 날짜, Long 등)**: `autoMapping="true"`에 의해 카멜케이스 규칙으로 자동 매핑됩니다.
@@ -359,133 +359,135 @@ JSON 컬럼과 일반 컬럼을 효율적으로 매핑하기 위해 **`autoMappi
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.nexcope.inform_note.domain.log.mapper.DownEventLogMapper">
+<mapper namespace="io.nexcope.inform_note.domain.card.mapper.DownEventCardMapper">
 
-    <!-- ResultMap: 일반 컬럼은 autoMapping 처리, JSON 컬럼만 명시적 TypeHandler 지정 -->
-    <resultMap id="downEventLogResultMap" type="io.nexcope.inform_note.domain.log.entity.DownEventLog" autoMapping="true">
-        <!-- 단일 JSON 객체 매핑 -->
-        <result property="assignedTechnician" column="assigned_technician" 
-                javaType="io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician"
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
-        <result property="approver" column="approver" 
-                javaType="io.nexcope.inform_note.domain.log.entity.vo.Approver"
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler" />
-        <!-- 리스트 JSON 객체 매핑 -->
-        <result property="partReplacements" column="part_replacements" 
-                typeHandler="io.nexcope.inform_note.base.util.json.JsonListTypeHandler" />
-    </resultMap>
+   <!-- ResultMap: 일반 컬럼은 autoMapping 처리, JSON 컬럼만 명시적 TypeHandler 지정 -->
+   <resultMap id="downEventLogResultMap" type="io.nexcope.inform_note.domain.card.entity.DownEventCard"
+              autoMapping="true">
+      <!-- 단일 JSON 객체 매핑 -->
+      <result property="assignedTechnician" column="assigned_technician"
+              javaType="io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler"/>
+      <result property="approver" column="approver"
+              javaType="io.nexcope.inform_note.domain.card.entity.vo.Approver"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonTypeHandler"/>
+      <!-- 리스트 JSON 객체 매핑 -->
+      <result property="partReplacements" column="part_replacements"
+              typeHandler="io.nexcope.inform_note.base.util.json.JsonListTypeHandler"/>
+   </resultMap>
 
-    <!-- 1. 단건 조회 -->
-    <select id="findById" parameterType="string" resultMap="downEventLogResultMap">
-        SELECT 
-            down_event_id,
-            equipment_id,
-            chamber_id,
-            fabrication_plant,
-            process_module,
-            equipment_model,
-            down_type,
-            work_status,
-            down_start_datetime,
-            down_end_datetime,
-            down_duration_minutes,
-            is_critical,
-            down_code,
-            down_code_description,
-            alarm_id,
-            assigned_technician,
-            approver,
-            part_replacements,
-            created_by,
-            created_at,
-            updated_by,
-            updated_at
-        FROM tb_down_event_log
-        WHERE down_event_id = #{downEventId}
-    </select>
+   <!-- 1. 단건 조회 -->
+   <select id="findById" parameterType="string" resultMap="downEventLogResultMap">
+      SELECT
+      down_event_id,
+      equipment_id,
+      chamber_id,
+      fabrication_plant,
+      process_module,
+      equipment_model,
+      down_type,
+      work_status,
+      down_start_datetime,
+      down_end_datetime,
+      down_duration_minutes,
+      is_critical,
+      down_code,
+      down_code_description,
+      alarm_id,
+      assigned_technician,
+      approver,
+      part_replacements,
+      created_by,
+      created_at,
+      updated_by,
+      updated_at
+      FROM tb_down_event_log
+      WHERE down_event_id = #{downEventId}
+   </select>
 
-    <!-- 2. 전체 목록 조회 -->
-    <select id="findAll" resultMap="downEventLogResultMap">
-        SELECT *
-        FROM tb_down_event_log
-        ORDER BY down_start_datetime DESC
-    </select>
+   <!-- 2. 전체 목록 조회 -->
+   <select id="findAll" resultMap="downEventLogResultMap">
+      SELECT *
+      FROM tb_down_event_log
+      ORDER BY down_start_datetime DESC
+   </select>
 
 
-    <!-- 3. 등록 (Insert with JSON Objects) -->
-    <insert id="insert" parameterType="com.informnote.domain.downevent.domain.DownEventLog">
-        INSERT INTO tb_down_event_log (
-            down_event_id,
-            equipment_id,
-            chamber_id,
-            fabrication_plant,
-            process_module,
-            equipment_model,
-            down_type,
-            work_status,
-            down_start_datetime,
-            down_end_datetime,
-            down_duration_minutes,
-            is_critical,
-            down_code,
-            down_code_description,
-            alarm_id,
-            assigned_technician,
-            approver,
-            part_replacements,
-            created_by,
-            created_at,
-            updated_by,
-            updated_at
-        ) VALUES (
-            #{downEventId},
-            #{equipmentId},
-            #{chamberId},
-            #{fabricationPlant},
-            #{processModule},
-            #{equipmentModel},
-            #{downType},
-            #{workStatus},
-            #{downStartDatetime},
-            #{downEndDatetime},
-            #{downDurationMinutes},
-            #{isCritical},
-            #{downCode},
-            #{downCodeDescription},
-            #{alarmId},
-            #{assignedTechnician, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
-            #{approver, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
-            #{partReplacements, typeHandler=com.informnote.global.typehandler.PartReplacementListTypeHandler},
-            #{createdBy},
-            SYSTIMESTAMP,
-            #{updatedBy},
-            SYSTIMESTAMP
-        )
-    </insert>
+   <!-- 3. 등록 (Insert with JSON Objects) -->
+   <insert id="insert" parameterType="com.informnote.domain.downevent.domain.DownEventLog">
+      INSERT INTO tb_down_event_log (
+      down_event_id,
+      equipment_id,
+      chamber_id,
+      fabrication_plant,
+      process_module,
+      equipment_model,
+      down_type,
+      work_status,
+      down_start_datetime,
+      down_end_datetime,
+      down_duration_minutes,
+      is_critical,
+      down_code,
+      down_code_description,
+      alarm_id,
+      assigned_technician,
+      approver,
+      part_replacements,
+      created_by,
+      created_at,
+      updated_by,
+      updated_at
+      ) VALUES (
+      #{downEventId},
+      #{equipmentId},
+      #{chamberId},
+      #{fabricationPlant},
+      #{processModule},
+      #{equipmentModel},
+      #{downType},
+      #{workStatus},
+      #{downStartDatetime},
+      #{downEndDatetime},
+      #{downDurationMinutes},
+      #{isCritical},
+      #{downCode},
+      #{downCodeDescription},
+      #{alarmId},
+      #{assignedTechnician, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
+      #{approver, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
+      #{partReplacements, typeHandler=com.informnote.global.typehandler.PartReplacementListTypeHandler},
+      #{createdBy},
+      SYSTIMESTAMP,
+      #{updatedBy},
+      SYSTIMESTAMP
+      )
+   </insert>
 
-    <!-- 4. 수정 (Update) -->
-    <update id="update" parameterType="com.informnote.domain.downevent.domain.DownEventLog">
-        UPDATE tb_down_event_log
-        SET 
-            work_status             = #{workStatus},
-            down_end_datetime       = #{downEndDatetime},
-            down_duration_minutes   = #{downDurationMinutes},
-            assigned_technician     = #{assignedTechnician, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
-            approver                = #{approver, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
-            part_replacements       = #{partReplacements, typeHandler=com.informnote.global.typehandler.PartReplacementListTypeHandler},
-            updated_by              = #{updatedBy},
-            updated_at              = SYSTIMESTAMP
-        WHERE down_event_id = #{downEventId}
-    </update>
+   <!-- 4. 수정 (Update) -->
+   <update id="update" parameterType="com.informnote.domain.downevent.domain.DownEventLog">
+      UPDATE tb_down_event_log
+      SET
+      work_status = #{workStatus},
+      down_end_datetime = #{downEndDatetime},
+      down_duration_minutes = #{downDurationMinutes},
+      assigned_technician = #{assignedTechnician, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
+      approver = #{approver, typeHandler=com.informnote.global.typehandler.JsonTypeHandler},
+      part_replacements =
+      #{partReplacements, typeHandler=com.informnote.global.typehandler.PartReplacementListTypeHandler},
+      updated_by = #{updatedBy},
+      updated_at = SYSTIMESTAMP
+      WHERE down_event_id = #{downEventId}
+   </update>
 
-    <!-- 5. 삭제 (Delete) -->
-    <delete id="deleteById" parameterType="string">
-        DELETE FROM tb_down_event_log
-        WHERE down_event_id = #{downEventId}
-    </delete>
+   <!-- 5. 삭제 (Delete) -->
+   <delete id="deleteById" parameterType="string">
+      DELETE FROM tb_down_event_log
+      WHERE down_event_id = #{downEventId}
+   </delete>
 
 </mapper>
 ```

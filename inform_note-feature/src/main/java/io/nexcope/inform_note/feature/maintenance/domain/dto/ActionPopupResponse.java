@@ -1,9 +1,9 @@
 package io.nexcope.inform_note.feature.maintenance.domain.dto;
 
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
+import io.nexcope.inform_note.domain.card.entity.DownEventCard;
 import io.nexcope.inform_note.domain.content.entity.DownContent;
-import io.nexcope.inform_note.domain.log.entity.DownEventLog;
-import io.nexcope.inform_note.domain.log.entity.vo.*;
+import io.nexcope.inform_note.domain.card.entity.vo.*;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -48,7 +48,7 @@ public class ActionPopupResponse implements JsonSerializable {
     // Rich Text 에디터에서 작성한 에디터
     private String contentHtml;    // Froala 에디터 HTML 본문 (Oracle CLOB 매핑)
 
-    public static ActionPopupResponse of(DownEventLog eventLog, DownContent content) {
+    public static ActionPopupResponse of(DownEventCard eventLog, DownContent content) {
         //
         ActionPopupResponse response = new ActionPopupResponse();
         BeanUtils.copyProperties(eventLog, response);

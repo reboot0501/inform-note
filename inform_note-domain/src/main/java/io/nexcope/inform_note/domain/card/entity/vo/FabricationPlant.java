@@ -1,4 +1,4 @@
-package io.nexcope.inform_note.domain.log.entity.vo;
+package io.nexcope.inform_note.domain.card.entity.vo;
 
 import io.nexcope.inform_note.base.domain.entity.CodeName;
 import lombok.AllArgsConstructor;
@@ -9,24 +9,28 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public enum ReplacementType {
+public enum FabricationPlant {
     //
-    REPLACEMENT_PART("Replacement Part"),
-    USE_MATERIAL("USE MATERIAL");
+    FAB_1("FAB-1 (300mm)"),
+    FAB_2("FAB-2 (300mm)"),
+    FAB_3("FAB-3 (300mm)"),
+    RND_FAB("R&D FAB"),
+    PKG("PKG Line");
 
     private final String description;
 
     public static List<String> getDescriptions() {
         //
         return Arrays.stream(values())
-                .map(ReplacementType::getDescription)
+                .map(FabricationPlant::getDescription)
                 .toList();
     }
 
     public static List<CodeName> getCodeNames() {
         //
         return Arrays.stream(values())
-                .map(replacementType -> CodeName.of(replacementType.name(), replacementType.getDescription()))
+                .map(fab -> CodeName.of(fab.name(), fab.getDescription()))
                 .toList();
     }
+
 }

@@ -1,4 +1,4 @@
-package io.nexcope.inform_note.domain.log.entity.vo;
+package io.nexcope.inform_note.domain.card.entity.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DownEventLogSearchCriteria {
+public class DownEventCardSearchCriteria {
     // [1행 검색 조건]
     private FabricationPlant fabricationPlant; // FAB/Site
     private ProcessModule processModule;       // Process Module

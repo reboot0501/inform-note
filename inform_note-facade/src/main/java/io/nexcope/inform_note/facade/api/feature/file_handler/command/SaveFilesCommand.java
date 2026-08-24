@@ -3,7 +3,7 @@ package io.nexcope.inform_note.facade.api.feature.file_handler.command;
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
 import io.nexcope.inform_note.base.util.json.JsonUtil;
 import io.nexcope.inform_note.domain.file.entity.vo.FileRefType;
-import io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician;
+import io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;

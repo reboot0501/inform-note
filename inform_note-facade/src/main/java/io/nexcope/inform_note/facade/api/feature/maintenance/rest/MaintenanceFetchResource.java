@@ -1,10 +1,10 @@
 package io.nexcope.inform_note.facade.api.feature.maintenance.rest;
 
 import io.nexcope.inform_note.base.domain.entity.OffsetElementList;
+import io.nexcope.inform_note.domain.card.entity.DownEventCard;
 import io.nexcope.inform_note.domain.employees.entity.vo.EmployeeSearchCriteria;
 import io.nexcope.inform_note.domain.employees.entity.vo.ExtractEmployee;
-import io.nexcope.inform_note.domain.log.entity.DownEventLog;
-import io.nexcope.inform_note.domain.log.entity.vo.DownEventLogSearchCriteria;
+import io.nexcope.inform_note.domain.card.entity.vo.DownEventCardSearchCriteria;
 import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindActionPopupFetch;
 import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindDownEventsFetch;
 import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindTechniciansFetch;
@@ -28,10 +28,10 @@ public class MaintenanceFetchResource {
 
     @Operation(summary = "장비 Down 내역 조회", description = "장비 Down 이벤트 내역을 페이징 조회 합니다.")
     @PostMapping("/find-down-events/fetch")
-    public OffsetElementList<DownEventLog> findDownEvents(@RequestBody FindDownEventsFetch fetch) {
+    public OffsetElementList<DownEventCard> findDownEvents(@RequestBody FindDownEventsFetch fetch) {
         //
         fetch.validate();
-        DownEventLogSearchCriteria criteria = fetch.getCriteria();
+        DownEventCardSearchCriteria criteria = fetch.getCriteria();
         return maintenanceFetch.findDownEvents(criteria);
     }
 

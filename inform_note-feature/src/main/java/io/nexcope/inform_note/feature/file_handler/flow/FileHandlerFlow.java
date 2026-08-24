@@ -5,7 +5,7 @@ import io.nexcope.inform_note.domain.file.entity.dto.AttachedFileDto;
 import io.nexcope.inform_note.domain.file.entity.vo.FileRefType;
 import io.nexcope.inform_note.domain.file.entity.vo.FileStatus;
 import io.nexcope.inform_note.domain.file.logic.AttachedFileLogic;
-import io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician;
+import io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

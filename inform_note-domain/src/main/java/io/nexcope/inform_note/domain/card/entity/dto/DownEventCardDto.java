@@ -1,9 +1,9 @@
-package io.nexcope.inform_note.domain.log.entity.dto;
+package io.nexcope.inform_note.domain.card.entity.dto;
 
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.DownEventLog;
-import io.nexcope.inform_note.domain.log.entity.vo.*;
+import io.nexcope.inform_note.domain.card.entity.DownEventCard;
+import io.nexcope.inform_note.domain.card.entity.vo.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DownEventLogDto  implements JsonSerializable {
+public class DownEventCardDto implements JsonSerializable {
     //
     private String equipmentId;
     private String chamberId;
@@ -37,17 +37,17 @@ public class DownEventLogDto  implements JsonSerializable {
 
     public String genId() {
         //
-        return DownEventLog.genId(equipmentId);
+        return DownEventCard.genId(equipmentId);
     }
 
-    public static DownEventLogDto fromJson(String json) {
+    public static DownEventCardDto fromJson(String json) {
         //
-        return JsonUtil.fromJson(json, DownEventLogDto.class);
+        return JsonUtil.fromJson(json, DownEventCardDto.class);
     }
 
-    public static DownEventLogDto sample() {
+    public static DownEventCardDto sample() {
         //
-        return DownEventLogDto.builder()
+        return DownEventCardDto.builder()
                 .equipmentId("PH-ASML-01") // 장비 고유 ID
                 .chamberId("Ch-A") // 챔버 고유 ID
                 .fabricationPlant(FabricationPlant.FAB_1) // FAB 코드 (Enum: FabricationPlant)

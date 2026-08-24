@@ -2,7 +2,7 @@ package io.nexcope.inform_note.domain.employees.entity.vo;
 
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.vo.Shift;
+import io.nexcope.inform_note.domain.card.entity.vo.Shift;
 import lombok.*;
 
 @Getter

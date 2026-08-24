@@ -2,7 +2,7 @@ package io.nexcope.inform_note.facade.api.feature.maintenance.fetch;
 
 import io.nexcope.inform_note.base.util.json.JsonSerializable;
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.vo.DownEventLogSearchCriteria;
+import io.nexcope.inform_note.domain.card.entity.vo.DownEventCardSearchCriteria;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 @NoArgsConstructor
 public class FindDownEventsFetch implements JsonSerializable {
     //
-    private DownEventLogSearchCriteria criteria;
+    private DownEventCardSearchCriteria criteria;
 
     public void validate() {
         //

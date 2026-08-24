@@ -1,7 +1,7 @@
 package io.nexcope.inform_note.facade.api.feature.file_handler.rest;
 
 import io.nexcope.inform_note.domain.file.entity.vo.FileRefType;
-import io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician;
+import io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician;
 import io.nexcope.inform_note.facade.api.feature.file_handler.command.RegisterTempFileCommand;
 import io.nexcope.inform_note.feature.file_handler.domain.dto.TempFileRegisteredResponse;
 import io.nexcope.inform_note.feature.file_handler.flow.FileHandlerFlow;

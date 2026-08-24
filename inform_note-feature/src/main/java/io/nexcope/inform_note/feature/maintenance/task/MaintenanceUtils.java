@@ -1,8 +1,8 @@
 package io.nexcope.inform_note.feature.maintenance.task;
 
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.vo.AssignedTechnician;
-import io.nexcope.inform_note.domain.log.entity.vo.PartReplacement;
+import io.nexcope.inform_note.domain.card.entity.vo.AssignedTechnician;
+import io.nexcope.inform_note.domain.card.entity.vo.PartReplacement;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

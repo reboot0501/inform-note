@@ -1,9 +1,8 @@
-package io.nexcope.inform_note.domain.log.entity;
+package io.nexcope.inform_note.domain.card.entity;
 
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.base.util.uuid.UUIDv7;
-import io.nexcope.inform_note.domain.log.entity.dto.DownEventLogDto;
-import io.nexcope.inform_note.domain.log.entity.vo.*;
+import io.nexcope.inform_note.domain.card.entity.dto.DownEventCardDto;
+import io.nexcope.inform_note.domain.card.entity.vo.*;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // MyBatis 리플렉션 매핑을 위한 기본 생성자
 @AllArgsConstructor
 @Builder
-public class DownEventLog {
+public class DownEventCard {
     // [식별자]
     private String downEventId;
     private String equipmentId;
@@ -53,7 +52,7 @@ public class DownEventLog {
     private String updatedBy;
     private OffsetDateTime updatedAt;
 
-    public DownEventLog(DownEventLogDto dto) {
+    public DownEventCard(DownEventCardDto dto) {
         //
         this.downEventId = dto.genId();
         BeanUtils.copyProperties(dto, this);
@@ -67,9 +66,9 @@ public class DownEventLog {
         return String.format("%s_D%s", equipmentId, now.format(DateTimeFormatter.ofPattern("yy-MM-dd_HH:mm:ss.SSS")));
     }
 
-    public static DownEventLog fromJson(String json) {
+    public static DownEventCard fromJson(String json) {
         //
-        return JsonUtil.fromJson(json, DownEventLog.class);
+        return JsonUtil.fromJson(json, DownEventCard.class);
     }
 
     // =================================================================

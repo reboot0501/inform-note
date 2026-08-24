@@ -1,4 +1,4 @@
-package io.nexcope.inform_note.domain.log.entity.vo;
+package io.nexcope.inform_note.domain.card.entity.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

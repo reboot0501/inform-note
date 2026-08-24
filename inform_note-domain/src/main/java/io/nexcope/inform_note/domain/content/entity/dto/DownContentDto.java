@@ -1,7 +1,6 @@
 package io.nexcope.inform_note.domain.content.entity.dto;
 
 import io.nexcope.inform_note.base.util.json.JsonUtil;
-import io.nexcope.inform_note.domain.log.entity.dto.DownEventLogDto;
 import lombok.*;
 
 @Getter
