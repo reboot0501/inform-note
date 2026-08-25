@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindDownEventsFetch implements JsonSerializable {
+public class FindDownEventCardsFetch implements JsonSerializable {
     //
     private DownEventCardSearchCriteria criteria;
 
@@ -28,8 +28,8 @@ public class FindDownEventsFetch implements JsonSerializable {
         return toJson();
     }
 
-    public static FindDownEventsFetch fromJson(String json) {
+    public static FindDownEventCardsFetch fromJson(String json) {
         //
-        return JsonUtil.fromJson(json, FindDownEventsFetch.class);
+        return JsonUtil.fromJson(json, FindDownEventCardsFetch.class);
     }
 }

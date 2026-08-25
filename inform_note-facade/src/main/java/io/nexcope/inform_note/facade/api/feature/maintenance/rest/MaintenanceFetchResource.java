@@ -6,7 +6,7 @@ import io.nexcope.inform_note.domain.employees.entity.vo.EmployeeSearchCriteria;
 import io.nexcope.inform_note.domain.employees.entity.vo.ExtractEmployee;
 import io.nexcope.inform_note.domain.card.entity.vo.DownEventCardSearchCriteria;
 import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindActionPopupFetch;
-import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindDownEventsFetch;
+import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindDownEventCardsFetch;
 import io.nexcope.inform_note.facade.api.feature.maintenance.fetch.FindTechniciansFetch;
 import io.nexcope.inform_note.feature.maintenance.domain.dto.ActionPopupResponse;
 import io.nexcope.inform_note.feature.maintenance.flow.MaintenanceFetch;
@@ -27,8 +27,8 @@ public class MaintenanceFetchResource {
     private final MaintenanceFetch maintenanceFetch;
 
     @Operation(summary = "장비 Down 내역 조회", description = "장비 Down 이벤트 내역을 페이징 조회 합니다.")
-    @PostMapping("/find-down-events/fetch")
-    public OffsetElementList<DownEventCard> findDownEvents(@RequestBody FindDownEventsFetch fetch) {
+    @PostMapping("/find-down-event-cards/fetch")
+    public OffsetElementList<DownEventCard> findDownEvents(@RequestBody FindDownEventCardsFetch fetch) {
         //
         fetch.validate();
         DownEventCardSearchCriteria criteria = fetch.getCriteria();
