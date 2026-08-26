@@ -28,7 +28,7 @@ public class FileHandlerFetchResource {
 
     @Operation(summary = "이미지/파일 인라인 조회 (에디터 <img> 태그용)")
     @GetMapping("/view/{fileId}")
-    public ResponseEntity<Resource> viewFile(@PathVariable String fileId) {
+    public ResponseEntity<Resource> viewFile(@PathVariable("fileId") String fileId) {
         // 1. Feature 계층을 통해 파일 메타데이터 및 물리 리소스 로드
         FileViewResponse viewResource = fileHandlerFetch.loadViewResource(fileId);
         if (viewResource == null) {
