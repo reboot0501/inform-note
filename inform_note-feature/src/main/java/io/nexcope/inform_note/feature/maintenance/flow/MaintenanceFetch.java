@@ -39,8 +39,10 @@ public class MaintenanceFetch {
 
     public ActionPopupResponse findActionPopup(String downEventId) {
         //
+        log.info("------------ findActionPopup downEventId : {}", downEventId);
         DownEventCard eventLog = downEventCardLogic.findById(downEventId);
         DownContent content = downContentLogic.findById(downEventId);
+        log.info("------------ findActionPopup content : {}", JsonUtil.toPrettyJson(content));
         return ActionPopupResponse.of(eventLog, content);
     }
 }
