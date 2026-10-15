@@ -21,5 +21,4 @@ public interface DownContentMapper {
     int saveOrUpdate(DownContent downContent);
     // 상세 본문 삭제 (Delete)
     int deleteById(@Param("downEventId") String downEventId);
-    
 }

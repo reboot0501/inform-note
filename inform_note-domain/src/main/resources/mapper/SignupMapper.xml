@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.nexcope.inform_note.domain.auth.mapper.SignupMapper">
+
+    <!-- ResultMap: 엔티티 컬럼 매핑 -->
+    <resultMap id="signupResultMap" type="io.nexcope.inform_note.domain.auth.entity.Signup">
+        <id property="signupId" column="signup_id" />
+        <result property="email" column="email" />
+        <result property="firstName" column="first_name" />
+        <result property="lastName" column="last_name" />
+        <result property="password" column="password" />
+        <result property="signupStatus" column="signup_status" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <!-- 공통 SELECT 컬럼 절 -->
+    <sql id="signupColumns">
+        signup_id,
+        email,
+        first_name,
+        last_name,
+        password,
+        signup_status,
+        created_by,
+        created_at,
+        updated_by,
+        updated_at
+    </sql>
+
+    <!-- 1. 단건 조회 (signupId 기준) -->
+    <select id="findById" parameterType="string" resultMap="signupResultMap">
+        SELECT 
+            <include refid="signupColumns" />
+        FROM tb_signup
+        WHERE signup_id = #{signupId}
+    </select>
+
+    <!-- 2. 이메일 존재 여부 확인 (EXISTS 최적화) -->
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM tb_signup
+                    WHERE email = #{email}
+                ) THEN 1
+                ELSE 0
+            END
+        FROM DUAL
+    </select>
+
+    <!-- 3. 가입 상태별 목록 조회 -->
+    <select id="findBySignupStatus" resultMap="signupResultMap">
+        SELECT 
+            <include refid="signupColumns" />
+        FROM tb_signup
+        WHERE signup_status = #{signupStatus}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 4. 회원 가입 등록 (Insert) -->
+    <insert id="insert" parameterType="io.nexcope.inform_note.domain.auth.entity.Signup">
+        INSERT INTO tb_signup (
+            signup_id,
+            email,
+            first_name,
+            last_name,
+            password,
+            signup_status,
+            created_by,
+            created_at,
+            updated_by,
+            updated_at
+        ) VALUES (
+            #{signupId},
+            #{email},
+            #{firstName},
+            #{lastName},
+            #{password},
+            #{signupStatus},
+            #{createdBy, jdbcType=VARCHAR},
+            SYSTIMESTAMP,
+            #{updatedBy, jdbcType=VARCHAR},
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <!-- 5. 회원 정보 수정 (Update) -->
+    <update id="update" parameterType="io.nexcope.inform_note.domain.auth.entity.Signup">
+        UPDATE tb_signup
+        <set>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="firstName != null and firstName != ''">
+                first_name = #{firstName},
+            </if>
+            <if test="lastName != null and lastName != ''">
+                last_name = #{lastName},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="signupStatus != null">
+                signup_status = #{signupStatus},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+            updated_at = SYSTIMESTAMP
+        </set>
+        WHERE signup_id = #{signupId}
+    </update>
+
+    <!-- 6. 회원 가입 정보 삭제 (Delete) -->
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM tb_signup
+        WHERE signup_id = #{signupId}
+    </delete>
+
+</mapper>

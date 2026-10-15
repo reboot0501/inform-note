@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9093
 
 spring:
   application:
@@ -63,5 +63,5 @@ springdoc:
 
 # 파일 저장 경로 설정
 file:
-  upload-dir: D:/inform-note-workspace/files
+  upload-dir: D:\project-workspace\inform-note-workspace\files
 
